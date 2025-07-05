@@ -65,19 +65,19 @@ export default function ForexProjectHub() {
   const progressPercent = totalItems > 0 ? Math.round((completedTasks / totalItems) * 100) : 0;
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="px-4 py-6 md:px-10 space-y-6 container mx-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Forex Project Hub</h1>
-        <div className="flex-1 mx-6">
+        <div className="flex-1 w-full sm:mx-6">
           <Progress value={progressPercent} className="h-4" />
         </div>
-        <span className="text-sm font-medium w-12 text-right">{progressPercent}%</span>
+        <span className="text-sm font-medium w-full sm:w-12 text-right">{progressPercent}%</span>
       </div>
 
       <Card>
         <CardContent className="p-4 space-y-4">
           <h2 className="text-xl font-semibold">Add New Task</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
             <Input placeholder="Task" value={newTask.task} onChange={(e) => setNewTask({ ...newTask, task: e.target.value })} />
             <Input placeholder="Assigned To" value={newTask.assigned} onChange={(e) => setNewTask({ ...newTask, assigned: e.target.value })} />
             <Input type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} />
@@ -91,7 +91,7 @@ export default function ForexProjectHub() {
           <h2 className="text-xl font-semibold">Task Tracker</h2>
           <div className="space-y-2">
             {tasks.map((t, i) => (
-              <div key={i} className="flex flex-col md:flex-row justify-between items-center gap-2 p-2 border rounded-xl">
+              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3 border rounded-xl">
                 <div>
                   <strong>{t.task}</strong> – {t.assigned} (Due: {t.due})
                 </div>
@@ -118,7 +118,7 @@ export default function ForexProjectHub() {
       <Card>
         <CardContent className="p-4 space-y-4">
           <h2 className="text-xl font-semibold">Weekly Trading Targets</h2>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Input placeholder="Add new target..." value={newTarget} onChange={(e) => setNewTarget(e.target.value)} />
             <Button onClick={addTarget}>Add</Button>
           </div>
@@ -138,14 +138,18 @@ export default function ForexProjectHub() {
       <Card>
         <CardContent className="p-4">
           <h2 className="text-xl font-semibold">Trade Notes & Strategy Ideas</h2>
-          <Textarea placeholder="Write your trade setups, news notes, and strategy changes here..." rows={8} />
+          <div className="w-full">
+            <Textarea className="w-full" placeholder="Write your trade setups, news notes, and strategy changes here..." rows={8} />
+          </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="p-4">
           <h2 className="text-xl font-semibold">Backtesting Log</h2>
-          <Textarea placeholder="Date | Pair | TF | Strategy | Result" rows={6} />
+          <div className="w-full">
+            <Textarea className="w-full" placeholder="Date | Pair | TF | Strategy | Result" rows={6} />
+          </div>
         </CardContent>
       </Card>
     </div>
