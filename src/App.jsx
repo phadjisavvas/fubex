@@ -6,14 +6,14 @@ export default function ForexProjectHub() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [newTask, setNewTask] = useState({ task: "", assigned: "", due: "", status: "Not Started" });
+  const [newTask, setNewTask] = useState({ task: "", assigned: "", due: "", status: "Not Started", weeklyTarget: "" });
 
   const [targets, setTargets] = useState(() => {
     const saved = localStorage.getItem("targets");
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [newTarget, setNewTarget] = useState("");
+  const [newTarget, setNewTarget] = useState({ target: "", assigned: "" });
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -26,7 +26,7 @@ export default function ForexProjectHub() {
   const addTask = () => {
     if (newTask.task && newTask.assigned && newTask.due) {
       setTasks([...tasks, newTask]);
-      setNewTask({ task: "", assigned: "", due: "", status: "Not Started" });
+      setNewTask({ task: "", assigned: "", due: "", status: "Not Started", weeklyTarget: "" });
     }
   };
 
@@ -43,9 +43,9 @@ export default function ForexProjectHub() {
   };
 
   const addTarget = () => {
-    if (newTarget.trim() !== "") {
+    if (newTarget.target.trim() && newTarget.assigned.trim()) {
       setTargets([...targets, newTarget]);
-      setNewTarget("");
+      setNewTarget({ target: "", assigned: "" });
     }
   };
 
@@ -56,8 +56,11 @@ export default function ForexProjectHub() {
   };
 
   const completedTasks = tasks.filter(t => t.status === "Completed").length;
-  const totalItems = tasks.length + targets.length;
-  const progressPercent = totalItems > 0 ? Math.round((completedTasks / totalItems) * 100) : 0;
+  const progressPercent = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
+
+  const getTargetsForPerson = (name) => {
+    return targets.filter(t => t.assigned === name);
+  };
 
   return (
     <div className="p-4 max-w-4xl mx-auto space-y-6">
@@ -77,8 +80,18 @@ export default function ForexProjectHub() {
           <input className="border p-2 rounded" placeholder="Task" value={newTask.task} onChange={(e) => setNewTask({ ...newTask, task: e.target.value })} />
           <input className="border p-2 rounded" placeholder="Assigned To" value={newTask.assigned} onChange={(e) => setNewTask({ ...newTask, assigned: e.target.value })} />
           <input className="border p-2 rounded" type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} />
-          <button className="bg-black text-white rounded px-4 py-2" onClick={addTask}>Add</button>
+          <select
+            className="border p-2 rounded"
+            value={newTask.weeklyTarget}
+            onChange={(e) => setNewTask({ ...newTask, weeklyTarget: e.target.value })}
+          >
+            <option value="">Select Weekly Target</option>
+            {getTargetsForPerson(newTask.assigned).map((target, idx) => (
+              <option key={idx} value={target.target}>{target.target}</option>
+            ))}
+          </select>
         </div>
+        <button className="bg-black text-white rounded px-4 py-2 mt-2" onClick={addTask}>Add</button>
       </div>
 
       <div className="bg-white shadow rounded p-4 space-y-4">
@@ -87,7 +100,8 @@ export default function ForexProjectHub() {
           {tasks.map((t, i) => (
             <div key={i} className="flex flex-col sm:flex-row justify-between items-center gap-2 p-2 border rounded">
               <div>
-                <strong>{t.task}</strong> – {t.assigned} (Due: {t.due})
+                <strong>{t.task}</strong> – {t.assigned} (Due: {t.due})<br />
+                <span className="text-sm text-gray-600">Target: {t.weeklyTarget || "None"}</span>
               </div>
               <div className="flex gap-2 items-center">
                 <select
@@ -110,14 +124,15 @@ export default function ForexProjectHub() {
 
       <div className="bg-white shadow rounded p-4 space-y-4">
         <h2 className="text-xl font-semibold">Weekly Trading Targets</h2>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <input className="border p-2 rounded flex-1" placeholder="Add new target..." value={newTarget} onChange={(e) => setNewTarget(e.target.value)} />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <input className="border p-2 rounded" placeholder="Target" value={newTarget.target} onChange={(e) => setNewTarget({ ...newTarget, target: e.target.value })} />
+          <input className="border p-2 rounded" placeholder="Assigned To" value={newTarget.assigned} onChange={(e) => setNewTarget({ ...newTarget, assigned: e.target.value })} />
           <button className="bg-black text-white rounded px-4 py-2" onClick={addTarget}>Add</button>
         </div>
         <ul className="list-disc list-inside space-y-1">
-          {targets.map((target, index) => (
+          {targets.map((t, index) => (
             <li key={index} className="flex justify-between items-center">
-              <span>{target}</span>
+              <span><strong>{t.target}</strong> – {t.assigned}</span>
               <button className="bg-red-600 text-white px-2 py-1 rounded" onClick={() => deleteTarget(index)}>
                 Delete
               </button>
