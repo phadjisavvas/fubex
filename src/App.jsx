@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent } from ".components/ui/card";
+import { Card, CardContent } from "./omponents/ui/card";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { Textarea } from ".components/ui/textarea";
-import { Progress } from ".components/ui/progress";
+import { Textarea } from "./omponents/ui/textarea";
+import { Progress } from "./omponents/ui/progress";
 
 export default function ForexProjectHub() {
   const [tasks, setTasks] = useState(() => {
