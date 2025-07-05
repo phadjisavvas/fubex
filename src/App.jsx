@@ -1,9 +1,4 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "./components/ui/card";
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
-import { Textarea } from "./components/ui/textarea";
-import { Progress } from "./components/ui/progress";
 
 export default function ForexProjectHub() {
   const [tasks, setTasks] = useState(() => {
@@ -65,93 +60,81 @@ export default function ForexProjectHub() {
   const progressPercent = totalItems > 0 ? Math.round((completedTasks / totalItems) * 100) : 0;
 
   return (
-    <div className="px-4 py-6 md:px-10 space-y-6 container mx-auto">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="p-4 max-w-4xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Forex Project Hub</h1>
-        <div className="flex-1 w-full sm:mx-6">
-          <Progress value={progressPercent} className="h-4" />
+        <div className="w-full sm:w-auto flex-1">
+          <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-4 bg-black transition-all" style={{ width: `${progressPercent}%` }}></div>
+          </div>
         </div>
-        <span className="text-sm font-medium w-full sm:w-12 text-right">{progressPercent}%</span>
+        <span className="text-sm font-medium text-right w-12">{progressPercent}%</span>
       </div>
 
-      <Card>
-        <CardContent className="p-4 space-y-4">
-          <h2 className="text-xl font-semibold">Add New Task</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
-            <Input placeholder="Task" value={newTask.task} onChange={(e) => setNewTask({ ...newTask, task: e.target.value })} />
-            <Input placeholder="Assigned To" value={newTask.assigned} onChange={(e) => setNewTask({ ...newTask, assigned: e.target.value })} />
-            <Input type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} />
-            <Button onClick={addTask}>Add</Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-white shadow rounded p-4 space-y-4">
+        <h2 className="text-xl font-semibold">Add New Task</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+          <input className="border p-2 rounded" placeholder="Task" value={newTask.task} onChange={(e) => setNewTask({ ...newTask, task: e.target.value })} />
+          <input className="border p-2 rounded" placeholder="Assigned To" value={newTask.assigned} onChange={(e) => setNewTask({ ...newTask, assigned: e.target.value })} />
+          <input className="border p-2 rounded" type="date" value={newTask.due} onChange={(e) => setNewTask({ ...newTask, due: e.target.value })} />
+          <button className="bg-black text-white rounded px-4 py-2" onClick={addTask}>Add</button>
+        </div>
+      </div>
 
-      <Card>
-        <CardContent className="p-4 space-y-4">
-          <h2 className="text-xl font-semibold">Task Tracker</h2>
-          <div className="space-y-2">
-            {tasks.map((t, i) => (
-              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3 border rounded-xl">
-                <div>
-                  <strong>{t.task}</strong> – {t.assigned} (Due: {t.due})
-                </div>
-                <div className="flex gap-2 items-center">
-                  <select
-                    value={t.status}
-                    onChange={(e) => updateStatus(i, e.target.value)}
-                    className="border rounded px-2 py-1"
-                  >
-                    <option>Not Started</option>
-                    <option>In Progress</option>
-                    <option>Completed</option>
-                  </select>
-                  <Button variant="destructive" size="sm" onClick={() => deleteTask(i)}>
-                    Delete
-                  </Button>
-                </div>
+      <div className="bg-white shadow rounded p-4 space-y-4">
+        <h2 className="text-xl font-semibold">Task Tracker</h2>
+        <div className="space-y-2">
+          {tasks.map((t, i) => (
+            <div key={i} className="flex flex-col sm:flex-row justify-between items-center gap-2 p-2 border rounded">
+              <div>
+                <strong>{t.task}</strong> – {t.assigned} (Due: {t.due})
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4 space-y-4">
-          <h2 className="text-xl font-semibold">Weekly Trading Targets</h2>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Input placeholder="Add new target..." value={newTarget} onChange={(e) => setNewTarget(e.target.value)} />
-            <Button onClick={addTarget}>Add</Button>
-          </div>
-          <ul className="list-disc list-inside space-y-1">
-            {targets.map((target, index) => (
-              <li key={index} className="flex justify-between items-center">
-                <span>{target}</span>
-                <Button variant="destructive" size="sm" onClick={() => deleteTarget(index)}>
+              <div className="flex gap-2 items-center">
+                <select
+                  value={t.status}
+                  onChange={(e) => updateStatus(i, e.target.value)}
+                  className="border rounded px-2 py-1"
+                >
+                  <option>Not Started</option>
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                </select>
+                <button className="bg-red-600 text-white px-2 py-1 rounded" onClick={() => deleteTask(i)}>
                   Delete
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <h2 className="text-xl font-semibold">Trade Notes & Strategy Ideas</h2>
-          <div className="w-full">
-            <Textarea className="w-full" placeholder="Write your trade setups, news notes, and strategy changes here..." rows={8} />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-white shadow rounded p-4 space-y-4">
+        <h2 className="text-xl font-semibold">Weekly Trading Targets</h2>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input className="border p-2 rounded flex-1" placeholder="Add new target..." value={newTarget} onChange={(e) => setNewTarget(e.target.value)} />
+          <button className="bg-black text-white rounded px-4 py-2" onClick={addTarget}>Add</button>
+        </div>
+        <ul className="list-disc list-inside space-y-1">
+          {targets.map((target, index) => (
+            <li key={index} className="flex justify-between items-center">
+              <span>{target}</span>
+              <button className="bg-red-600 text-white px-2 py-1 rounded" onClick={() => deleteTarget(index)}>
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <h2 className="text-xl font-semibold">Backtesting Log</h2>
-          <div className="w-full">
-            <Textarea className="w-full" placeholder="Date | Pair | TF | Strategy | Result" rows={6} />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-white shadow rounded p-4">
+        <h2 className="text-xl font-semibold">Trade Notes & Strategy Ideas</h2>
+        <textarea className="border rounded w-full p-2 mt-2" rows={6} placeholder="Write your trade setups, news notes, and strategy changes here..." />
+      </div>
+
+      <div className="bg-white shadow rounded p-4">
+        <h2 className="text-xl font-semibold">Backtesting Log</h2>
+        <textarea className="border rounded w-full p-2 mt-2" rows={6} placeholder="Date | Pair | TF | Strategy | Result" />
+      </div>
     </div>
   );
 }
