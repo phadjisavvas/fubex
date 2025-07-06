@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { supabase } from "./supabase";
+import supabase from './supabase';
 
 import LandingPage from "./LandingPage.jsx";
 import Login from "./Login.jsx";
