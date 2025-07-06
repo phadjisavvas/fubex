@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { auth } from "./firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { supabase } from "./supabase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    const saved = JSON.parse(localStorage.getItem("user"));
-    if (saved?.email === email && saved?.password === password) {
-      navigate(localStorage.getItem("plan") ? "/hub" : "/plan");
+  const handleLogin = async () => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      alert("Login failed: " + error.message);
     } else {
-      alert("Invalid credentials");
+      navigate("/plan");
     }
   };
 

@@ -1,4 +1,31 @@
 import { useState, useEffect } from "react";
+import { supabase } from "./supabase";
+
+const addTask = async () => {
+  if (!newTask.task || !newTask.assigned || !newTask.due) return;
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from("tasks")
+    .insert([
+      {
+        user_id: user.id,
+        task: newTask.task,
+        assigned: newTask.assigned,
+        due: newTask.due,
+        status: newTask.status,
+        weekly_target: newTask.weeklyTarget,
+      },
+    ]);
+
+  if (error) {
+    alert("Failed to save task");
+  } else {
+    setTasks([...tasks, newTask]);
+    setNewTask({ task: "", assigned: "", due: "", status: "Not Started", weeklyTarget: "" });
+  }
+};
 
 export default function ForexProjectHub() {
   const [tasks, setTasks] = useState(() => {
