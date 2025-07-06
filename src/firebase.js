@@ -9,7 +9,7 @@ const firebaseConfig = {
   projectId: "fubex-ef833",
   storageBucket: "fubex.appspot.com",
   messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  appId: "1:64296286089:web:e0dc18ff37cf81207f5358"
 };
 
 // Initialize Firebase App
