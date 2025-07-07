@@ -1,50 +1,31 @@
-const express = require('express');
-const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // your real Stripe Secret Key
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const app = express();
+exports.handler = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).end('Method Not Allowed');
+  }
 
-// ✅ CORS setup to allow your frontend
-app.use(cors({
-  origin: 'https://fubex.online',
-  methods: ['POST'],
-  credentials: true
-}));
-
-app.use(express.json());
-
-const PORT = process.env.PORT || 4242;
-
-const PRICES = {
-  Pro: 'price_XXXXXXXXXXXXXX',  // 🔁 Replace with your actual Stripe price ID
-};
-
-app.post('/create-checkout-session', async (req, res) => {
   const { plan } = req.body;
 
+  const PRICES = {
+    Pro: 'price_XXXXXXX', // Replace with your actual Stripe Price ID
+  };
+
   if (!PRICES[plan]) {
-    return res.status(400).json({ error: 'Invalid plan selected' });
+    return res.status(400).json({ error: 'Invalid plan' });
   }
 
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: PRICES[plan],
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription', // or 'payment' for one-time
+      line_items: [{ price: PRICES[plan], quantity: 1 }],
+      mode: 'subscription',
       success_url: 'https://fubex.online/success',
       cancel_url: 'https://fubex.online/cancel',
     });
 
     res.json({ id: session.id });
-  } catch (error) {
-    console.error("Stripe error:", error);
-    res.status(500).json({ error: "Failed to create session" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-});
-
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+};
