@@ -5,7 +5,15 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const PORT = process.env.PORT || 4242;
 
-app.use(cors({ origin: 'https://fubex.online' }));
+app.use(cors({
+  origin: 'https://fubex.online',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true
+}));
+
+app.options('*', cors()); // enable preflight across-the-board
+
 app.use(express.json());
 
 const PRICES = {
