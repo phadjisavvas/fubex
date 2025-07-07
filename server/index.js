@@ -7,18 +7,13 @@ const PORT = process.env.PORT || 4242;
 
 // Allow CORS from fubex.online
 app.use(cors({
-  origin: (origin, callback) => {
-    const allowed = ["https://fubex.online"];
-    if (!origin || allowed.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
+  origin: 'https://fubex.online',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
 }));
 
+// required for preflight
+app.options('*', cors());
 
 app.use(express.json());
 
