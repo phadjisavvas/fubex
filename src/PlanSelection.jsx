@@ -14,13 +14,12 @@ export default function PlanSelection() {
     } else if (plan === "Pro") {
       const stripe = await stripePromise;
 
-      const res = await fetch("/create-checkout-session", {
+      const res = await fetch("https://fubex.onrender.com/create-checkout-session", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),
-      });
+    });
+
 
       const session = await res.json();
       await stripe.redirectToCheckout({ sessionId: session.id });
