@@ -3,7 +3,14 @@ const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // your real Stripe Secret Key
 
 const app = express();
-app.use(cors());
+
+// ✅ CORS setup to allow your frontend
+app.use(cors({
+  origin: 'https://fubex.online',
+  methods: ['POST'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 4242;
