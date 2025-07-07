@@ -1,44 +1,34 @@
 const express = require('express');
 const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // secure!
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 4242;
 
 const corsOptions = {
-  origin: 'https://fubex.online',
+  origin: 'https://fubex.online', // your frontend
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-
-// Handle preflight requests manually (important!)
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // ✅ handles preflight with headers
 
 app.use(express.json());
 
 const PRICES = {
-  Pro: 'your_stripe_price_id_here', // replace with your actual Stripe Price ID
+  Pro: 'your_stripe_price_id_here',
 };
 
 app.post('/create-checkout-session', async (req, res) => {
   const { plan } = req.body;
-
-  if (!PRICES[plan]) {
-    return res.status(400).json({ error: 'Invalid plan selected' });
-  }
+  if (!PRICES[plan]) return res.status(400).json({ error: 'Invalid plan selected' });
 
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: PRICES[plan],
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: PRICES[plan], quantity: 1 }],
       mode: 'subscription',
       success_url: 'https://fubex.online/success',
       cancel_url: 'https://fubex.online/cancel',
