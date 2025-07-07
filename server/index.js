@@ -5,15 +5,17 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // secure!
 const app = express();
 const PORT = process.env.PORT || 4242;
 
-// Allow CORS from fubex.online
-app.use(cors({
+const corsOptions = {
   origin: 'https://fubex.online',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
-}));
+  optionsSuccessStatus: 200,
+};
 
-// required for preflight
-app.options('*', cors());
+app.use(cors(corsOptions));
+
+// Handle preflight requests manually (important!)
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
