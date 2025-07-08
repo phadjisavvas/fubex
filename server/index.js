@@ -1,7 +1,10 @@
-const express = require('express');
-const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const app = express();
+import express from 'express';
+import cors from 'cors';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+
 const PORT = process.env.PORT || 4242;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
