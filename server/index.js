@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 const app = express();
 const PORT = process.env.PORT || 4242;
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 const corsOptions = {
   origin: 'https://fubex.online', // your frontend
@@ -13,6 +14,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
 app.options('*', cors(corsOptions)); // ✅ handles preflight with headers
 
 app.use(express.json());
