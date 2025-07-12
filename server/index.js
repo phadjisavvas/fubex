@@ -9,19 +9,24 @@ const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const PORT = process.env.PORT || 4424;
 
-// ✅ CORS configuration
-app.use(cors({
-  origin: 'https://fubex.online', // front-end domain
-  methods: ['GET', 'POST'],
+// ✅ Fix: Apply CORS middleware properly
+const corsOptions = {
+  origin: 'https://fubex.online',
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
+  credentials: true,
   optionsSuccessStatus: 200,
-}));
+};
+
+app.use(cors(corsOptions));
+
+// ✅ Fix: Handle preflight OPTIONS requests
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
-// ✅ Stripe Price ID from Stripe dashboard
 const PRICES = {
-  Pro: 'price_1Rk1zhIjKZMEtZlcqibWTQO9', // replace with your actual price ID
+  Pro: 'price_1Rk1zhIjKZMEtZlcqibWTQO9', // Replace with your actual Price ID
 };
 
 app.post('/create-checkout-session', async (req, res) => {
@@ -34,12 +39,7 @@ app.post('/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: PRICES[plan],
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: PRICES[plan], quantity: 1 }],
       mode: 'subscription',
       success_url: 'https://fubex.online/success',
       cancel_url: 'https://fubex.online/cancel',
@@ -47,7 +47,7 @@ app.post('/create-checkout-session', async (req, res) => {
 
     res.json({ id: session.id });
   } catch (err) {
-    console.error('Stripe session error:', err.message);
+    console.error('Stripe error:', err.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
