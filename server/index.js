@@ -1,29 +1,27 @@
 import express from 'express';
 import cors from 'cors';
 import Stripe from 'stripe';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-
-const PORT = process.env.PORT || 4242;
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const app = express();
+const PORT = process.env.PORT || 4424;
 
 const corsOptions = {
-  origin: 'https://fubex.online', // your frontend
+  origin: 'https://fubex.online',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-
-app.options('*', cors(corsOptions)); // ✅ handles preflight with headers
-
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 const PRICES = {
-  Pro: 'your_stripe_price_id_here',
+  Pro: 'price_XXXXXXXXXXXX', // your real Stripe price ID here
 };
 
 app.post('/create-checkout-session', async (req, res) => {
@@ -41,10 +39,10 @@ app.post('/create-checkout-session', async (req, res) => {
 
     res.json({ id: session.id });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to create session' });
+    res.status(500).json({ error: err.message });
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
