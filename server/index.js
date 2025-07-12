@@ -1,32 +1,17 @@
-import express from 'express';
-import cors from 'cors';
-import Stripe from 'stripe';
-import dotenv from 'dotenv';
-
-dotenv.config();
+const express = require('express');
+const cors = require('cors');
+const Stripe = require('stripe');
+require('dotenv').config();
 
 const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const PORT = process.env.PORT || 4424;
 
-// ✅ Fix: Apply CORS middleware properly
-const corsOptions = {
-  origin: 'https://fubex.online',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-
-app.use(cors(corsOptions));
-
-// ✅ Fix: Handle preflight OPTIONS requests
-app.options('*', cors(corsOptions));
-
+app.use(cors({ origin: 'https://fubex.online' }));
 app.use(express.json());
 
 const PRICES = {
-  Pro: 'price_1Rk1zhIjKZMEtZlcqibWTQO9', // Replace with your actual Price ID
+  Pro: 'price_1Rk1zhIjKZMEtZlcqibWTQO9' // ✅ real Stripe price ID here
 };
 
 app.post('/create-checkout-session', async (req, res) => {
@@ -45,13 +30,14 @@ app.post('/create-checkout-session', async (req, res) => {
       cancel_url: 'https://fubex.online/cancel',
     });
 
+    console.log('Created Stripe session:', session);
     res.json({ id: session.id });
   } catch (err) {
-    console.error('Stripe error:', err.message);
+    console.error('Stripe error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
