@@ -20,10 +20,10 @@ export default function PlanSelection() {
           "Content-Type": "application/json"
       },
         body: JSON.stringify({ plan })
+        mode: "cors"
     });
 
-
-
+    
       const session = await res.json();
       await stripe.redirectToCheckout({ sessionId: session.id });
     }
