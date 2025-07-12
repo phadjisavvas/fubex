@@ -8,26 +8,25 @@ export default function PlanSelection() {
   const navigate = useNavigate();
 
   const selectPlan = async (plan) => {
-    if (plan === "Free") {
-      localStorage.setItem("plan", plan);
-      navigate("/hub");
-    } else if (plan === "Pro") {
-      const stripe = await stripePromise;
+  if (plan === "Free") {
+    localStorage.setItem("plan", plan);
+    navigate("/hub");
+  } else if (plan === "Pro") {
+    const stripe = await stripePromise;
 
     const res = await fetch("https://fubex-backend.onrender.com/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
       },
-        body: JSON.stringify({ plan })
-        mode: "cors"
+      body: JSON.stringify({ plan })
     });
 
-    
-      const session = await res.json();
-      await stripe.redirectToCheckout({ sessionId: session.id });
-    }
-  };
+    const session = await res.json();
+    await stripe.redirectToCheckout({ sessionId: session.id });
+  }
+};
 
   return (
     <div className="p-4 max-w-md mx-auto space-y-4">
