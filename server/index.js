@@ -7,11 +7,16 @@ const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const PORT = process.env.PORT || 4424;
 
-app.use(cors({ origin: 'https://fubex.online' }));
+app.use(cors({
+  origin: 'https://fubex.online',
+  methods: ['POST'],
+  allowedHeaders: ['Content-Type'],
+}));
+
 app.use(express.json());
 
 const PRICES = {
-  Pro: 'price_1Rk1zhIjKZMEtZlcqibWTQO9' // ✅ real Stripe price ID here
+  Pro: 'price_1Rk1zhIjKZMEtZlcqibWTQO9', // ✅ Your real Stripe price ID
 };
 
 app.post('/create-checkout-session', async (req, res) => {
@@ -23,21 +28,25 @@ app.post('/create-checkout-session', async (req, res) => {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [{ price: PRICES[plan], quantity: 1 }],
+      line_items: [
+        {
+          price: PRICES[plan],
+          quantity: 1,
+        },
+      ],
       mode: 'subscription',
       success_url: 'https://fubex.online/success',
       cancel_url: 'https://fubex.online/cancel',
     });
 
-    console.log('Created Stripe session:', session);
+    console.log('✅ Stripe session created:', session.id);
     res.json({ id: session.id });
   } catch (err) {
-    console.error('Stripe error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('❌ Stripe session error:', err.message);
+    res.status(500).json({ error: 'Failed to create checkout session' });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
